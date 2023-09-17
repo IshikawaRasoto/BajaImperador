@@ -9,6 +9,7 @@
 ###########
 
 import tkinter
+from tkinter import ttk
 import os
 from PIL import Image, ImageTk
 import serial.tools.list_ports
@@ -45,6 +46,10 @@ freioAtual  = False
 temperaturaAtual = False
 bateriaAtual = False
 
+
+dataVel = []
+dataRPM = []
+dataTempo = []
 
 
 
@@ -105,8 +110,21 @@ def eventoBotaoApagar():
 
 def eventoBotaoEnviar():
     print("Enviar")
+    return
 
+def eventoExportarExcel():
+    
+    data = {
+        'horario': dataTempo,
+        'velocidade': dataVel,
+        'RPM': dataRPM
+    }
 
+    df = pd.DataFrame(data)
+
+    df.to_excel(r'C:\Users\rafae\OneDrive\Documentos\Code\Baja\BajaImperador\2023-2\Telemetria\planilha\data.xlsx', index=False)
+
+    return
 
 
 ###### JANELA PRINCIPAL
@@ -115,7 +133,7 @@ janela = tkinter.Tk()
 janela.geometry("1280x720")
 janela.title("Imperador - Telemetria")
 janela.grid_rowconfigure(0, weight=1)
-janela.grid_columnconfigure(1, weight=1)
+janela.grid_columnconfigure(1, weight=1)   
 
 
 
@@ -215,6 +233,96 @@ enviarBotao.grid(row=9, column=0, padx=20, pady=0)
 
 
 
+###### FRAME DE TELEMETRIA
+
+frameTelemetriaEsquerdo = tkinter.Frame(frameTelemetria)
+frameTelemetriaEsquerdo.grid_columnconfigure(0, weight=1)
+frameTelemetriaEsquerdo.grid(row=0, column=0, sticky="nsew")
+
+frameTelemetriaDireito = tkinter.Frame(frameTelemetria)
+frameTelemetriaDireito.grid_columnconfigure(0, weight=1)
+frameTelemetriaDireito.grid(row=0, column=1, sticky="nsew")
+
+velocidadeLabel = tkinter.Label(frameTelemetriaEsquerdo, text = "Velocidade: 0 km/h", font=fonteTitulo, image=imagemVelocidade, compound="top")
+velocidadeLabel.grid(row=0, column=0, padx=20, pady=20)
+
+rpmLabel = tkinter.Label(frameTelemetriaEsquerdo, text="RPM: 0", font=fonteTitulo, image=imagemRpm, compound="top")
+rpmLabel.grid(row=1, column=0, padx=20, pady=5)
+
+rpmProgressBar = ttk.Progressbar(frameTelemetriaEsquerdo, orient="horizontal", length=200)
+rpmProgressBar.grid(column=0, row=2, padx=10, pady=0)
+
+
+
+
+###### Frame Log
+
+botaoExportar = tkinter.Button(frameLog, text="Exportar para Excel", command=eventoExportarExcel)
+botaoExportar.grid(row=0, column=0, padx=50, pady=100, sticky="we")
+
+
+
+
+###### Funções de Evento do Código
+
+def selecionarFrame(nome):
+    
+    if nome == "conexao":
+        
+        frameConexao.grid(row=0, column=1, sticky="nsew")
+
+        serialInst = serial.Serial()
+
+        ports = serial.tools.list_ports.comports()
+        portList = []
+
+        for onePort in ports:
+            portList.append(str(onePort))
+
+        portaCOMSelector = tkinter.OptionMenu(frameConexao, varPortaCOM, value=portList, command=eventoSelectCOM)
+        portaCOMSelector.grid(row=4, column=0, padx=20, pady=10)
+
+    else:
+        frameConexao.grid_forget()
+
+    
+    if nome == "telemetria":
+        frameTelemetria.grid(row=0, column=1, sticky="nsew")
+    else:
+        frameTelemetria.grid_forget()
+
+    if nome == "log":
+        frameLog.grid(row=0, column=1, sticky="nsew")
+    else:
+        frameLog.grid_forget()
+
+
+
+def eventoBotaoTelemetria():
+    selecionarFrame("telemetria")
+    return
+
+def eventoBotaoConexao():
+    selecionarFrame("conexao")
+    return
+
+def eventoBotaoLog():
+    selecionarFrame("log")
+    return
+
+
+
+
+
+
+###### Threads
+
+
+
+
+
+
+
 
 ###### Frame De Navegação
 
@@ -224,13 +332,13 @@ frameNavegacaoLogo.grid(row=0, column=0, padx=20, pady=0)
 frameNavegacaoTitulo = tkinter.Label(frameNavegacao, text="Telemetria Imperador", compound="left", font=fonteTitulo)
 frameNavegacaoTitulo.grid(row=1, column=0, padx=20, pady=0)
 
-NavegacaoBotaoConexao = tkinter.Button(frameNavegacao, text=" Conexão", font = fonteTitulo, compound=tkinter.LEFT, image=imagemConexao)
+NavegacaoBotaoConexao = tkinter.Button(frameNavegacao, text=" Conexão", font = fonteTitulo, compound=tkinter.LEFT, image=imagemConexao, command=eventoBotaoConexao)
 NavegacaoBotaoConexao.grid(row=2, column=0, sticky="nsew", padx=10, pady=5)
 
-NavegacaoBotaoTelemetria = tkinter.Button(frameNavegacao, text=" Telemetria", font = fonteTitulo, compound=tkinter.LEFT, image=imagemTelemetria)
+NavegacaoBotaoTelemetria = tkinter.Button(frameNavegacao, text=" Telemetria", font = fonteTitulo, compound=tkinter.LEFT, image=imagemTelemetria, command=eventoBotaoTelemetria)
 NavegacaoBotaoTelemetria.grid(row=3, column=0, sticky="nsew", padx=10, pady=5)
 
-NavegacaoBotaoLog = tkinter.Button(frameNavegacao, text=" Log", font = fonteTitulo, compound=tkinter.LEFT, image=imagemLog)
+NavegacaoBotaoLog = tkinter.Button(frameNavegacao, text=" Log", font = fonteTitulo, compound=tkinter.LEFT, image=imagemLog, command=eventoBotaoLog)
 NavegacaoBotaoLog.grid(row=4, column=0, sticky="nsew", padx=10, pady=5)
 
 
