@@ -18,6 +18,8 @@ import continuous_threading
 import datetime
 import numpy
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from drawnow import *
 import pandas as pd
 
@@ -43,8 +45,8 @@ baudrate = 9600
 velocidadeAtual = 0
 rpmAtual = 0
 freioAtual  = False
-temperaturaAtual = False
-bateriaAtual = False
+temperaturaAtual = True
+bateriaAtual = True
 
 
 dataVel = []
@@ -331,9 +333,90 @@ def eventoBotaoLog():
 
 ###### Threads
 
+def lerSerial():
+    
+    global textoRecebido
+    global velocidadeAtual
+    global rpmAtual
+    global temperaturaAtual
+    global freioAtual
+    global bateriaAtual
+
+    if statusConexao == False:
+        return
+    
+    serialTexto = serialInst.readline()
+
+    hoje = datetime.datetime.now()
+    horario = hoje.strftime("%H:%M:%S.%f")
+    horario = horario[0:11]
+    horario_graf = horario[0:8]
+    dataTempo.append(horario_graf)
+
+    serialTexto = serialTexto.decode("utf-8")
+
+    texto = serialTexto
+    textoRecebido.insert("0.0", horario + " -> " + texto)
+
+    velocidadeAtual = int(texto[texto.index("V") + 1: texto.index("T")])
+    dataVel.append(velocidadeAtual)
+
+    rpmAtual = int(texto[texto.index("R") + 1: texto.index("V")])*10
+    dataRPM.append(rpmAtual)
+
+    temperatura_string = texto[texto.index("T") + 1: texto.index("F")]
+    freio_string = texto[texto.index("F") + 1: texto.index("B")]
+    bateria_string = texto[texto.index("B") + 1: len(texto) - 1]
+
+    if temperatura_string == "0":
+        temperaturaAtual = False
+    else:
+        temperaturaAtual = True
+
+    if freio_string == "0":
+        freioAtual = False
+    else:
+        freioAtual = True
+    
+    if bateria_string == "0":
+        bateriaAtual = False
+    else:
+        bateriaAtual = True
+
+    return
 
 
+def atualizar():
 
+    global textoRecebido
+    global velocidadeAtual
+    global rpmAtual
+    global temperaturaAtual
+    global freioAtual
+    global bateriaAtual
+
+    print("Thread" + str(temperaturaAtual) + " " + str(bateriaAtual) + " " + str(freioAtual))
+
+    velocidadeLabel.configure(text = ("Velocidade" + str(velocidadeAtual) + " km/h"))
+    rpmLabel.configure(text=("RPM" + str(rpmAtual)))
+    rpmProgressBar['value'] = (rpmAtual/4000)*100
+
+    if temperaturaAtual == True:
+        temperaturaAviso.configure(fg="red", text="ALERTA - ALTA")
+    else:
+        temperaturaAviso.configure(fg="green", text="OK")
+
+    if bateriaAtual == True:
+        bateriaAviso.configure(fg="red", text="Alerta")
+    else:
+        bateriaAviso.configure(fg="green", text="OK")
+
+    if freioAtual == True:
+        freioLabel.configure(text="   Freio: Ativado")
+    else:
+        freioLabel.configure(text = "   Freio: Desativado")
+
+    return
 
 
 
@@ -359,6 +442,16 @@ NavegacaoBotaoLog.grid(row=4, column=0, sticky="nsew", padx=10, pady=5)
 
 
 
+###### Declaração das Threads
+
+threadSerial = continuous_threading.PeriodicThread(0.5, lerSerial)
+threadAtualizar = continuous_threading.PeriodicThread(0.5, atualizar)
+threadSerial.start()
+threadAtualizar.start()
+
 
 
 janela.mainloop()
+
+threadSerial.stop()
+threadAtualizar.stop()
