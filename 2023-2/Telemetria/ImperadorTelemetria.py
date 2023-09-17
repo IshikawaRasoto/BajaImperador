@@ -22,6 +22,9 @@ import pandas as pd
 
 
 
+
+
+
 ###### Variáveis
 
 serialInst = serial.Serial()
@@ -34,26 +37,74 @@ for onePort in ports:
 
 statusConexao = False
 baudrate = 9600
-global portaCOM
-portaCOM = "COM3"
+
 
 velocidadeAtual = 0
 rpmAtual = 0
-freioAtual = False
+freioAtual  = False
 temperaturaAtual = False
 bateriaAtual = False
+
+
 
 
 ###### Eventos
 
 def eventoSelectBaudRate(baudRate_recebido):
+   
     baudRate_recebido = varBaudRate.get()
     print("Baud Rate recebido: " + baudRate_recebido)
 
+    global baudrate
+    baudrate = baudRate_recebido
+    print("Variável BaudRate: " + str(baudrate))
+
+    return
+    
 
 
+def eventoSelectCOM(COM_recebido):
+    
+    COM_recebido = varPortaCOM.get()
+    print("Porta COM recebida: " + COM_recebido)
+
+    global portaCOM
+    
+    for i in range(0, len(portList)):
+        if portList[i] == COM_recebido:
+            print("COM recebida" + portList[i][0:4])
+            portaCOM = portList[i][0:4]
+
+    return
 
 
+def eventoBotaoConectar():
+    global statusConexao
+    
+    if statusConexao == False:
+        
+        statusConexao = True
+        conectarBotao.configure(text="Desconectar")
+        statusConexaoLabel.configure(text="Conectado", bg="green")
+        serialInst.baudrate = baudrate
+        serialInst.port = portaCOM
+        serialInst.open()
+
+        return
+    
+    statusConexao = False
+    conectarBotao.configure(text="Conectar")
+    statusConexaoLabel.configure(text="Desconectado", bg = "red")
+    serialInst.close()
+
+    return
+
+def eventoBotaoApagar():
+    textoRecebido.delete("0.0", "end")
+    return
+
+def eventoBotaoEnviar():
+    print("Enviar")
 
 
 
@@ -68,21 +119,33 @@ janela.grid_columnconfigure(1, weight=1)
 
 
 
+
+
 ###### FONTES
 
 fonteTitulo = ("Impact", 20, "bold")
 fonteBotao = ("Oswald", 20)
+fonteTexto = ("Oswald", 12)
+
+
+
 
 
 ###### IMAGENS 
 
 image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "imgs")
 
-imagemLogo = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Logo.png")).resize((200,100), Image.Resampling.LANCZOS))
-imagemConexao = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Conexao.png")).resize((50,50), Image.Resampling.LANCZOS))
-imagemTelemetria = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Telemetria.png")).resize((50,50), Image.Resampling.LANCZOS))
-imagemLog = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Log.png")).resize((50,50), Image.Resampling.LANCZOS))
-
+imagemLogo          = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Logo.png")).resize((200,100), Image.Resampling.LANCZOS))
+imagemConexao       = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Conexao.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemTelemetria    = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Telemetria.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemLog           = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Log.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemBorracha      = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Borracha.png")).resize((30,30), Image.Resampling.LANCZOS))
+imagemFreio         = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Freio.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemTemperatura   = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Temperatura.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemBateria       = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Bateria.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemVelocidade    = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Velocidade.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemRpm           = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Rpm.png")).resize((50,50), Image.Resampling.LANCZOS))
+imagemConectar      = ImageTk.PhotoImage(Image.open(os.path.join(image_path, "Conectar.png")).resize((25,25), Image.Resampling.LANCZOS))
 
 
 
@@ -128,6 +191,28 @@ baudRateSelector.grid(row = 2, column=0, padx=20, pady=10)
 portaCOMLabel = tkinter.Label(frameConexao, text="Porta COM", font=fonteBotao)
 portaCOMLabel.grid(row=3, column=0, padx=20, pady=0)
 
+varPortaCOM = tkinter.StringVar()
+varPortaCOM.set("COM3")
+
+portaCOMSelector = tkinter.OptionMenu(frameConexao, varPortaCOM, value=portList, command=eventoSelectCOM)
+portaCOMSelector.grid(row=4, column=0, padx=20, pady=10)
+
+conectarBotao = tkinter.Button(frameConexao, text="Conectar" if statusConexao == False else "Desconectar", image = imagemConectar, command=eventoBotaoConectar)
+conectarBotao.grid(row=5, column=0, padx=20, pady=10)
+
+textoRecebido = tkinter.Text(frameConexao, state="normal", font=fonteTexto, width=50, height=10)
+textoRecebido.grid(row=6, column=0, padx=20, pady=10)
+
+apagarBotao = tkinter.Button(frameConexao, text="Apagar", image=imagemBorracha, command=eventoBotaoApagar)
+apagarBotao.grid(row=7, column=0, padx=20, pady=0)
+
+textoComando = tkinter.Text(frameConexao, state = "disabled" if statusConexao == False else "normal", font=fonteTexto, width=50, height=1)
+textoComando.grid(row=8, column=0, padx=20, pady=10)
+
+enviarBotao = tkinter.Button(frameConexao, text="Enviar", state= "disabled" if statusConexao == False else "normal", command=eventoBotaoEnviar)
+enviarBotao.grid(row=9, column=0, padx=20, pady=0)
+
+
 
 
 
@@ -140,13 +225,13 @@ frameNavegacaoTitulo = tkinter.Label(frameNavegacao, text="Telemetria Imperador"
 frameNavegacaoTitulo.grid(row=1, column=0, padx=20, pady=0)
 
 NavegacaoBotaoConexao = tkinter.Button(frameNavegacao, text=" Conexão", font = fonteTitulo, compound=tkinter.LEFT, image=imagemConexao)
-NavegacaoBotaoConexao.grid(row=2, column=0, sticky="nsew", pady=5)
+NavegacaoBotaoConexao.grid(row=2, column=0, sticky="nsew", padx=10, pady=5)
 
 NavegacaoBotaoTelemetria = tkinter.Button(frameNavegacao, text=" Telemetria", font = fonteTitulo, compound=tkinter.LEFT, image=imagemTelemetria)
-NavegacaoBotaoTelemetria.grid(row=3, column=0, sticky="nsew", pady=5)
+NavegacaoBotaoTelemetria.grid(row=3, column=0, sticky="nsew", padx=10, pady=5)
 
 NavegacaoBotaoLog = tkinter.Button(frameNavegacao, text=" Log", font = fonteTitulo, compound=tkinter.LEFT, image=imagemLog)
-NavegacaoBotaoLog.grid(row=4, column=0, sticky="nsew", pady=5)
+NavegacaoBotaoLog.grid(row=4, column=0, sticky="nsew", padx=10, pady=5)
 
 
 
