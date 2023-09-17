@@ -252,6 +252,20 @@ rpmLabel.grid(row=1, column=0, padx=20, pady=5)
 rpmProgressBar = ttk.Progressbar(frameTelemetriaEsquerdo, orient="horizontal", length=200)
 rpmProgressBar.grid(column=0, row=2, padx=10, pady=0)
 
+temperaturaLabel = tkinter.Label(frameTelemetriaEsquerdo, text="Temperatura", font=fonteTitulo, image=imagemTemperatura, compound="top")
+temperaturaLabel.grid(row=3, column=0, padx=20, pady=20)
+
+temperaturaAviso = tkinter.Label(frameTelemetriaEsquerdo, text="OK", font=fonteTitulo, fg="green")
+temperaturaAviso.grid(row=4, column=0, padx=20, pady=0)
+
+bateriaLabel = tkinter.Label(frameTelemetriaEsquerdo, text="Bateria", font=fonteTitulo, image=imagemBateria, compound="top")
+bateriaLabel.grid(row=5, column=0, padx=20, pady=20)
+
+bateriaAviso = tkinter.Label(frameTelemetriaEsquerdo, text="OK", font=fonteTitulo, fg="green")
+bateriaAviso.grid(row=6, column=0, padx=20, pady=0)
+
+freioLabel = tkinter.Label(frameTelemetriaEsquerdo, text=("   Freio: Desativado"), font=fonteTitulo, image=imagemFreio, compound="left")
+freioLabel.grid(row=7, column=0, padx=20, pady=50)
 
 
 
