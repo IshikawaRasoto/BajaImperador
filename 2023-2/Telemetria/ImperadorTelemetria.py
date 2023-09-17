@@ -20,6 +20,7 @@ import numpy
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 from drawnow import *
 import pandas as pd
 
@@ -52,7 +53,13 @@ bateriaAtual = True
 dataVel = []
 dataRPM = []
 dataTempo = []
+valoresX = []
+fGrafico = Figure(figsize=(7,7), dpi=100)
+grafVel = fGrafico.add_subplot(211)
+grafRPM = fGrafico.add_subplot(212)
 
+for i in range(0, 60):
+    valoresX.append(i)
 
 
 ###### Eventos
@@ -287,6 +294,10 @@ def selecionarFrame(nome):
         
         frameConexao.grid(row=0, column=1, sticky="nsew")
 
+        global serialInst
+        global ports
+        global portList
+
         serialInst = serial.Serial()
 
         ports = serial.tools.list_ports.comports()
@@ -419,6 +430,31 @@ def atualizar():
     return
 
 
+def animacaoGraficos():
+
+    dataVelGrafico = dataVel[-60:]
+    dataRPMGrafico = dataRPM[-60:]
+
+    grafVel.clear()
+    grafRPM.clear()
+
+    grafVel.plot(valoresX, dataVelGrafico, 'b')
+    grafRPM.plot(valoresX, dataRPMGrafico, 'b')
+
+    grafVel.set_title("Velocidade")
+    grafRPM.set_title("RPM")
+
+    grafVel.set_ylabel("km/h")
+    grafVel.set_xlabel("s")
+    grafVel.set_xlim(0, 60)
+    grafVel.set_ylim(0, 55)
+
+    grafRPM.set_ylabel("RPM")
+    grafRPM.set_xlabel("s")
+    grafRPM.set_xlim(0, 60)
+    grafRPM.set_ylim(0, 4500)
+
+    return
 
 
 ###### Frame De Navegação
@@ -437,6 +473,20 @@ NavegacaoBotaoTelemetria.grid(row=3, column=0, sticky="nsew", padx=10, pady=5)
 
 NavegacaoBotaoLog = tkinter.Button(frameNavegacao, text=" Log", font = fonteTitulo, compound=tkinter.LEFT, image=imagemLog, command=eventoBotaoLog)
 NavegacaoBotaoLog.grid(row=4, column=0, sticky="nsew", padx=10, pady=5)
+
+
+###### Gráficos
+
+
+graficos = FigureCanvasTkAgg(fGrafico, master=frameTelemetriaDireito)
+graficos.draw()
+graficos.get_tk_widget().pack(side=tkinter.BOTTOM, fill=tkinter.BOTH, expand = False)
+graficos._tkcanvas.pack()
+graficos._tkcanvas.pack(side=tkinter.TOP, fill=tkinter.BOTH, expand = False)
+
+ani = FuncAnimation(fGrafico, animacaoGraficos, interval=250, blit=False)
+
+
 
 
 
