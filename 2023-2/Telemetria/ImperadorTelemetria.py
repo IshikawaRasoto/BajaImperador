@@ -31,6 +31,10 @@ import pandas as pd
 
 ###### Variáveis
 
+global portaCOM
+
+portaCOM = 'COM3'
+
 serialInst = serial.Serial()
 
 ports = serial.tools.list_ports.comports()
@@ -78,22 +82,28 @@ def eventoSelectBaudRate(baudRate_recebido):
 
 
 def eventoSelectCOM(COM_recebido):
-    
-    COM_recebido = varPortaCOM.get()
-    print("Porta COM recebida: " + COM_recebido)
 
     global portaCOM
+
+    COM_recebido = varPortaCOM.get()
+
+    COM_recebido = COM_recebido[2:32]
+    
+    print("Porta COM recebida: " + COM_recebido)
     
     for i in range(0, len(portList)):
+        print(portList[i])
         if portList[i] == COM_recebido:
             print("COM recebida" + portList[i][0:4])
             portaCOM = portList[i][0:4]
+            print("Porta COM Selecionada: " + portaCOM)
 
     return
 
 
 def eventoBotaoConectar():
     global statusConexao
+    global serialInst
     
     if statusConexao == False:
         
@@ -369,30 +379,32 @@ def lerSerial():
     texto = serialTexto
     textoRecebido.insert("0.0", horario + " -> " + texto)
 
-    velocidadeAtual = int(texto[texto.index("V") + 1: texto.index("T")])
-    dataVel.append(velocidadeAtual)
+    ####
 
-    rpmAtual = int(texto[texto.index("R") + 1: texto.index("V")])*10
-    dataRPM.append(rpmAtual)
+    #velocidadeAtual = int(texto[texto.index("V") + 1: texto.index("T")])
+    #dataVel.append(velocidadeAtual)
 
-    temperatura_string = texto[texto.index("T") + 1: texto.index("F")]
-    freio_string = texto[texto.index("F") + 1: texto.index("B")]
-    bateria_string = texto[texto.index("B") + 1: len(texto) - 1]
+    #rpmAtual = int(texto[texto.index("R") + 1: texto.index("V")])*10
+    #dataRPM.append(rpmAtual)
 
-    if temperatura_string == "0":
-        temperaturaAtual = False
-    else:
-        temperaturaAtual = True
+    #temperatura_string = texto[texto.index("T") + 1: texto.index("F")]
+    #freio_string = texto[texto.index("F") + 1: texto.index("B")]
+    #bateria_string = texto[texto.index("B") + 1: len(texto) - 1]
 
-    if freio_string == "0":
-        freioAtual = False
-    else:
-        freioAtual = True
+    #if temperatura_string == "0":
+    #    temperaturaAtual = False
+    #else:
+    #    temperaturaAtual = True
+
+    #if freio_string == "0":
+    #    freioAtual = False
+    #else:
+    #    freioAtual = True
     
-    if bateria_string == "0":
-        bateriaAtual = False
-    else:
-        bateriaAtual = True
+    #if bateria_string == "0":
+    #    bateriaAtual = False
+    #else:
+    #    bateriaAtual = True
 
     return
 
