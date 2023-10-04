@@ -12,7 +12,7 @@ import tkinter
 from tkinter import ttk
 import os
 from PIL import Image, ImageTk
-import serial.tools.list_ports
+import serial.tools.list_ports # pyserial
 import threading
 import continuous_threading
 import datetime
