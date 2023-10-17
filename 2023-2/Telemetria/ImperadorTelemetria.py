@@ -57,6 +57,7 @@ aceleracaoZ = 0
 anguloX = 0
 anguloY = 0
 anguloZ = 0
+velocidadeGPS = 0
 
 
 dataVel = []
@@ -65,6 +66,7 @@ dataBateria = []
 dataTemperatura = []
 dataFreio = []
 dataTempo = []
+dataVelGPS = []
 
 dataAccX = []
 dataAccY = []
@@ -159,7 +161,8 @@ def eventoExportarExcel():
         'AccZ': aceleracaoZ,
         'AngX': anguloX,
         'AngY': anguloY,
-        'AngZ': anguloZ
+        'AngZ': anguloZ,
+        'velocidadeGPS': dataVelGPS
     }
 
     df = pd.DataFrame(data)
@@ -282,7 +285,7 @@ frameTelemetriaSuperior.grid_columnconfigure(1, weight=2)
 frameTelemetriaSuperior.grid(row=0, column=0, sticky="nsew")
 
 frameTelemetriaInferior = tkinter.Frame(frameTelemetria)
-frameTelemetriaInferior.grid_columnconfigure(3, weight=1)
+frameTelemetriaInferior.grid_columnconfigure(4, weight=1)
 frameTelemetriaInferior.grid_rowconfigure(2, weight=1)
 frameTelemetriaInferior.grid(row=1, column=0, sticky="nsew")
 
@@ -347,6 +350,9 @@ anguloYLabel.grid(row=1, column=1, padx=20, pady=20)
 
 anguloZLabel = tkinter.Label(frameTelemetriaInferior, text=("Ângulo Z: " + str(anguloZ) + "º"), font=fonteTitulo, compound="left")
 anguloZLabel.grid(row=1, column=2, padx=20, pady=20)
+
+velGPSLabel = tkinter.Label(frameTelemetriaInferior, text=("Velocidade GPS: " + str(velocidadeGPS) + " km/h"), font=fonteTitulo, compound="left")
+velGPSLabel.grid(row=0, column=3, padx=20, pady=20)
 
 
 
@@ -433,6 +439,8 @@ def lerSerial():
     global anguloY
     global anguloZ
 
+    global velocidadeGPS
+
     if statusConexao == False:
         return
     
@@ -449,7 +457,7 @@ def lerSerial():
     texto = serialTexto
     textoRecebido.insert("0.0", horario + " -> " + texto)
 
-    #### FORMATO ATUAL DA STRING: V**R***T***B**.*F*x*.*y*.*z*.*X***.*Y***.*Z***.*
+    #### FORMATO ATUAL DA STRING: V**R***T***B**.*F*x*.*y*.*z*.*X***.*Y***.*Z***.*G**
 
     velocidadeAtual = int(texto[texto.index("V") + 1: texto.index("R")])
     dataVel.append(velocidadeAtual)
@@ -485,8 +493,11 @@ def lerSerial():
     dataAngX.append(anguloX)
     anguloY = float(texto[texto.index("Y") + 1 : texto.index("Z")])
     dataAngY.append(anguloY)
-    anguloZ = float(texto[texto.index("Z") + 1 : len(texto)-1])
+    anguloZ = float(texto[texto.index("Z") + 1 : texto.index("G")])
     dataAngZ.append(anguloZ)
+
+    velocidadeGPS = int(texto[texto.index("G") + 1 : len(texto) - 1])
+    dataVelGPS.append(velocidadeGPS)
 
     return
 
@@ -500,6 +511,15 @@ def atualizar():
     global freioAtual
     global bateriaAtual
 
+    global aceleracaoX
+    global aceleracaoY
+    global aceleracaoZ
+    global anguloX
+    global anguloY
+    global anguloZ
+
+    global velocidadeGPS
+
     print("Thread" + str(temperaturaAtual) + " " + str(bateriaAtual) + " " + str(freioAtual))
 
     velocidadeLabel.configure(text = ("Velocidade" + str(velocidadeAtual) + " km/h"))
@@ -508,6 +528,16 @@ def atualizar():
 
     temperaturaLabel.configure(text = ("Temperatura: " + str(temperaturaAtual) + " ºC"))
     bateriaLabel.configure(text = ("Bateria: " + str(bateriaAtual) + " V"))
+
+    aceleracaoxLabel.configure(text = ("Aceleração X: " + str(aceleracaoX) + " G"))
+    aceleracaoYLabel.configure(text = ("Aceleração Y: " + str(aceleracaoY) + " G"))
+    aceleracaoZLabel.configure(text = ("Aceleração Z: " + str(aceleracaoZ) + " G"))
+
+    anguloXLabel.configure(text=("Ângulo X: " + str(anguloX) + "º"))
+    anguloYLabel.configure(text=("Ângulo Y: " + str(anguloY) + "º"))
+    anguloZLabel.configure(text=("Ângulo Z: " + str(anguloZ) + "º"))
+
+    velGPSLabel.configure(text=("Velocidade GPS: " + str(velocidadeGPS) + " km/h"))
 
     if temperaturaAtual > 75:
         temperaturaAviso.configure(fg="red", text="ALERTA - ALTA")
