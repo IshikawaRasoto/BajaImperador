@@ -42,9 +42,9 @@ class ImperadorAcelerometro
 
     bool iniciar(uint8_t escalaAcelerometro = 8, uint16_t escalaGiroscopio = 500, uint8_t faixaFiltro = 21);
 
-    Vetor3 getAceleracao();
+    Vetor3 get_aceleracao();
 
-    Vetor3 getGiro();
+    Vetor3 get_giro();
 
-    float getTemperatura();
+    float get_temperatura();
 };

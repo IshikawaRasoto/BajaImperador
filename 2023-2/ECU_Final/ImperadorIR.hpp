@@ -31,7 +31,7 @@ class ImperadorIR
 
     void atualizar();
 
-    double getTemperaturaObjeto();
-    double getTemperaturaAmbiente(); 
+    double get_temperatura_objeto();
+    double get_temperatura_ambiente(); 
 
 };

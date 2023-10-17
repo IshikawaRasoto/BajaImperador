@@ -11,14 +11,11 @@
 #include "defines.hpp"
 
 Codigo::Codigo():
-  contadorRodaE(0),
-  contadorRodaD(0),
-  contadorEixoT(0),
-  contadorRPM(0),
+  
   gps(BAUD_GPS, RX_GPS, TX_GPS),
   acelerometro(),
   infraVermelho(),
-  dev(false)
+  dev_mode(false)
 {}
 
 Codigo::~Codigo()
@@ -28,7 +25,7 @@ void Codigo::configurar()
 {
   iniciarSerial();
   delay(1000);
-  configuracaoPinos();
+  configurar_pinos();
 
   if(!acelerometro.iniciar())
   {
@@ -59,7 +56,7 @@ void Codigo::executar()
 
 
 
-void Codigo::configuracaoPinos()
+void Codigo::configurar_pinos()
 {
   pinMode(PINO_RODAD, INPUT);
   pinMode(PINO_RODAE, INPUT);
@@ -182,7 +179,5 @@ void Codigo::atualizarInt()
   baja.atualizar();
 }
 
-void Codigo::incrementarRodaE(){baja.incrementarRodaE();}
-void Codigo::incrementarRodaD(){baja.incrementarRodaD();}
-void Codigo::incrementarEixoT(){baja.incrementarEixoT();}
-void Codigo::incrementarRPM(){baja.incrementarRPM();}
+void atualizar_eixo_traseiro(){calcular_velocidade();}
+void atualizar_rpm(){calcular_rpm();}

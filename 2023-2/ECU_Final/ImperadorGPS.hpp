@@ -33,9 +33,9 @@ class ImperadorGPS
 
     void atualizar();
     
-    double getVelocidade();
-    double getLatitude();
-    double getLongitude();
-    double getAltitude();
-    double getCurso();
+    double get_velocidade();
+    double get_latitude();
+    double get_longitude();
+    double get_altitude();
+    double get_curso();
 };

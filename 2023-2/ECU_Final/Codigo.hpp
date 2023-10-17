@@ -24,28 +24,26 @@ class Codigo
     Veiculo baja;
     ImperadorGPS gps;
     ImperadorAcelerometro acelerometro;
-    ImperadorIR infraVermelho;
+    ImperadorIR infravermelho;
 
-    bool dev;
+    bool dev_mode;
 
-    uint16_t contadorRodaE;
-    uint16_t contadorRodaD;
-    uint16_t contadorEixoT;
-    uint16_t contadorRPM;
+    void configurar_pinos();
+    void iniciar_serial();
 
-    void configuracaoPinos();
-    void iniciarSerial();
+    void atualizar_eixo_traseiro();
+    void atualizar_rpm();
 
-    void enviarDados();
-    void enviarSerial();
-    void enviarLora();
-    void enviarCAN();
+    void enviar_dados();
+    void enviar_serial();
+    void enviar_lora();
+    void enviar_CAN();
 
 
-    void receberDados();
-    void verificarSerial();
-    void verificarLora();
-    void verificarCAN();
+    void receber_dados();
+    void verificar_serial();
+    void verificar_lora();
+    void verificar_CAN();
 
   public:
 
@@ -56,10 +54,5 @@ class Codigo
     void executar();
 
     void atualizar();
-    void atualizarInt();
-    void incrementarRPM();
-    void incrementarRodaE();
-    void incrementarRodaD();
-    void incrementarEixoT();
 
 };

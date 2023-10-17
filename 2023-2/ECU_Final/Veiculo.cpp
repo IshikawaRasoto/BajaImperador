@@ -17,15 +17,10 @@
 Veiculo::Veiculo():
   velocidade(0),
   RPM(0),
-  velocidadeRodaE(0),
-  velocidadeRodaD(0),
-  velocidadeEixoT(0),
-  contadorRPM(0),
-  contadorRodaD(0),
-  contadorRodaE(0),
-  contadorEixoT(0),
-  valorBateria(0),
-  percentualBateria(0),
+  tempo_velocidade(millis()),
+  tempo_rpm(millis()),
+  valor_bateria(0),
+  tensao_bateria(0.0),
   estadoFreio(false)
 {}
 
@@ -102,16 +97,11 @@ void Veiculo::incrementarRodaD(){contadorRodaD++;}
 void Veiculo::incrementarEixoT(){contadorEixoT++;}
 void Veiculo::incrementarRPM(){contadorRPM++;}
 
-float Veiculo::getVelocidade() {return velocidade;}
-float Veiculo::getVelocidadeRodaE() {return velocidadeRodaE;}
-float Veiculo::getVelocidadeRodaD() {return velocidadeRodaD;}
-float Veiculo::getVelocidadeEixoT() {return velocidadeEixoT;}
+int8_t Veiculo::get_velocidade() {return velocidade;}
 uint16_t Veiculo::getRPM() {return RPM;}
-uint8_t Veiculo::getBateria() {return percentualBateria;}
+float Veiculo::getBateria() {return tensao_bateria;}
 
-int8_t Veiculo::getFreio()
+int8_t Veiculo::get_Freio()
 {
-  if(estadoFreio)
-    return 1;
-  return 0;
+  return (estado_freio) ? true : false;
 }
