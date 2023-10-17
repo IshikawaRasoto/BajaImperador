@@ -147,6 +147,13 @@ def eventoBotaoEnviar():
     print("Enviar")
     return
 
+
+def eventoBotaoBox():
+    comando = "BOX"
+    serialInst.write(comando.encode('utf-8'))
+    return
+
+
 def eventoExportarExcel():
     
     data = {
@@ -178,7 +185,7 @@ janela = tkinter.Tk()
 janela.geometry("1920x950")
 janela.title("Imperador - Telemetria")
 janela.grid_rowconfigure(0, weight=1)
-janela.grid_columnconfigure(1, weight=1)   
+janela.grid_columnconfigure(1, weight=1)
 
 
 
@@ -353,6 +360,8 @@ anguloZLabel.grid(row=1, column=2, padx=20, pady=20)
 
 velGPSLabel = tkinter.Label(frameTelemetriaInferior, text=("Velocidade GPS: " + str(velocidadeGPS) + " km/h"), font=fonteTitulo, compound="left")
 velGPSLabel.grid(row=0, column=3, padx=20, pady=20)
+
+botaoBox = tkinter.Button(frameTelemetriaInferior, text="Box Box", font=fonteTitulo, command=eventoBotaoBox)
 
 
 
