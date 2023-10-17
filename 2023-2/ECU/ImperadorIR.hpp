@@ -1,0 +1,37 @@
+/*
+
+  ImperadorIR.hpp - Arquivo para declaração da biblioteca Imperador Infra-vermelho.
+  Criado em 14/07/2023 pelo Lambari para implementar no J12 até novembro e servir como base para o J13.
+
+*/
+
+#include <Arduino.h>
+
+#include <Wire.h>
+#include <Adafruit_MLX90614.h>
+
+#include "defines.hpp"
+
+class ImperadorIR
+{
+
+  private:
+
+    Adafruit_MLX90614 ir;
+
+    double tempAmb;
+    double tempObj;
+
+  public:
+
+    ImperadorIR();
+    ~ImperadorIR();
+
+    bool iniciar();
+
+    void atualizar();
+
+    double getTemperaturaObjeto();
+    double getTemperaturaAmbiente(); 
+
+};
