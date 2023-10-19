@@ -15,11 +15,11 @@ class Veiculo
 {
   private:
 
-    int8_t velocidade;
-    volatile uint16_t RPM;
+    volatile int8_t velocidade;
+    volatile uint16_t rpm;
 
-    unsigned long tempo_velocidade;
-    unsigned long tempo_rpm;
+    volatile unsigned long tempo_velocidade;
+    volatile unsigned long tempo_rpm;
 
     int valor_bateria;
     float tensao_bateria;
@@ -39,7 +39,7 @@ class Veiculo
 
 
     int8_t get_velocidade();
-    uint16_t get_RPM();
+    uint16_t get_rpm();
     uint8_t get_bateria();
     int8_t get_freio();
 
@@ -48,5 +48,7 @@ class Veiculo
 
     void atualizar();
     void atualizar_bateria();
+    void atualizar_velocidade();
+    void atualizar_rpm();
 
 };

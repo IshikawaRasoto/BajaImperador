@@ -28,6 +28,8 @@ class Codigo
 
     bool dev_mode;
 
+    bool box;
+
     void configurar_pinos();
     void iniciar_serial();
 

@@ -15,7 +15,8 @@ Codigo::Codigo():
   gps(BAUD_GPS, RX_GPS, TX_GPS),
   acelerometro(),
   infraVermelho(),
-  dev_mode(false)
+  dev_mode(false),
+  box(false)
 {}
 
 Codigo::~Codigo()
@@ -75,6 +76,7 @@ void Codigo::enviarDados()
 {
   enviarSerial();
   enviarCAN();
+  verificar_serial
 }
 
 void Codigo::enviarSerial()
@@ -82,27 +84,21 @@ void Codigo::enviarSerial()
   if(dev)
   {
     Serial.print("RPM:");
-    Serial.print(baja.getRPM());
+    Serial.print(baja.get_rpm());
     Serial.print("|Vel:");
-    Serial.print(baja.getVelocidade(), 0);
-    Serial.print("|VRD:");
-    Serial.print(baja.getVelocidadeRodaD(),0);
-    Serial.print("|VRE:");
-    Serial.print(baja.getVelocidadeRodaE(),0);
-    Serial.print("|VET:");
-    Serial.print(baja.getVelocidadeEixoT(),0);
+    Serial.print(baja.get_velocidade(), 0);
     Serial.print("|TEMP:");
-    Serial.print(infraVermelho.getTemperaturaObjeto(), 0);
+    Serial.print(infraVermelho.get_temperatura_objeto(), 0);
     Serial.print("|BAT:");
-    Serial.print(baja.getBateria());
+    Serial.print(baja.get_bateria());
     Serial.print("|FRE:");
-    Serial.print(baja.getFreio());
+    Serial.print(baja.get_freio());
     Serial.print("|ACLX:");
-    Serial.print(acelerometro.getAceleracao().x);
+    Serial.print(acelerometro.get_aceleracao().x);
     Serial.print("|ACLY:");
-    Serial.print(acelerometro.getAceleracao().y);
+    Serial.print(acelerometro.get_aceleracao().y);
     Serial.print("|ACLZ:");
-    Serial.print(acelerometro.getAceleracao().z);
+    Serial.print(acelerometro.get_aceleracao().z);
     Serial.print("|LAT:");
     Serial.print(gps.getLatitude());
     Serial.print("|LNG:");
@@ -115,19 +111,19 @@ void Codigo::enviarSerial()
   //!dev
   
   Serial.print("R");
-  Serial.print(baja.getRPM());
+  Serial.print(baja.get_rpm()/10);
 
   Serial.print("V");
-  Serial.print(baja.getVelocidade(),0);
+  Serial.print(baja.get_velocidade(),0);
 
   Serial.print("T");
-  Serial.print(infraVermelho.getTemperaturaObjeto(), 0);
+  Serial.print(infraVermelho.get_temperatura_objeto(), 0);
 
   Serial.print("B");
-  Serial.print(baja.getBateria());
+  Serial.print(baja.get_bateria());
 
   Serial.print("F");
-  Serial.println(baja.getFreio());
+  Serial.println(baja.get_freio());
 }
 
 void Codigo::enviarLora()
@@ -140,12 +136,7 @@ void Codigo::enviarCAN()
 
 }
 
-void Codigo::receberDados()
-{
-  verificarSerial();
-}
-
-void Codigo::verificarSerial(){
+void Codigo::verificar_serial(){
   if(Serial.available())
   {
     String comando = Serial.readString();
@@ -157,6 +148,11 @@ void Codigo::verificarSerial(){
     else if(comando == "NORMAL" || comando == "normal")
     {
       dev = false;
+    }
+    else if(comando == "BOX")
+    {
+      box = !box;
+      box ? Serial.println("BOX BOX"); : Serial.println("NO BOX");
     }
   }
 }

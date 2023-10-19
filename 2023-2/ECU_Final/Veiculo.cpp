@@ -16,69 +16,53 @@
 
 Veiculo::Veiculo():
   velocidade(0),
-  RPM(0),
+  rpm(0),
   tempo_velocidade(millis()),
   tempo_rpm(millis()),
   valor_bateria(0),
   tensao_bateria(0.0),
-  estadoFreio(false)
+  estado_freio(false)
 {}
 
 Veiculo::~Veiculo(){}
 
 void Veiculo::atualizar()
 {
-  atualizarRPM();
-  atualizarVelocidadeRodaE();
-  atualizarVelocidadeRodaD();
-  atualizarVelocidadeEixoT();
-  atualizarVelocidade();
-  atualizarFreio();
+  atualizar_freio();
+  atualizar_bateria();
+  atualizar_velocidade();
 
   atualizado = true;
 }
 
-void Veiculo::atualizarRPM()
+
+void Veiculo::atualizar_freio()
 {
-  RPM = contadorRPM; //* 2 * 60;
-  contadorRPM = 0;
+  digitalRead(PINO_FREIO) ? estado_freio = true : estado_freio = false;
 }
 
-void Veiculo::atualizarVelocidadeRodaD()
-{
-  velocidadeRodaD = (float)contadorRodaD;//(float)((contadorRodaD * 2.0 * COMPRIMENTO) * 3.6 / 4.0);
-  contadorRodaD = 0;
-}
-
-void Veiculo::atualizarVelocidadeRodaE()
-{
-  velocidadeRodaE = (float)contadorRodaE;//(float) ((contadorRodaE * 2.0 * COMPRIMENTO) * 3.6 / 4.0);
-  contadorRodaE = 0;
-}
-
-void Veiculo::atualizarVelocidadeEixoT()
-{
-  velocidadeEixoT = (float)contadorEixoT;//(float) ((contadorEixoT * 2.0 * COMPRIMENTO) * 3.6 / 4.0);
-  contadorEixoT = 0;
-}
-
-void Veiculo::atualizarVelocidade()
-{
-  velocidade = ((float)velocidadeRodaE + velocidadeRodaD) / 2.0;
-}
-
-void Veiculo::atualizarFreio()
-{
-  if(digitalRead(PINO_FREIO) == HIGH)
-    estadoFreio = true;
-  else
-    estadoFreio = false;
-}
-
-void Veiculo::atualizarBateria()
+void Veiculo::atualizar_bateria()
 {
   valorBateria = analogRead(PINO_BATERIA);
-  percentualBateria = ((float)valorBateria / 4095) * 100;
+  tensao_bateria = ((float)valorBateria / 4095) * 13.0;
+}
+
+void Veiculo::atualizar_velocidade()
+{
+  if(millis() - tempo_velocidade > 1000)
+  {
+    velocidade = 0;
+    tempo_velocidade = millis();
+  } 
+}
+
+void Veiculo::atualizar_rpm()
+{
+  if(millis() - tempo_rpm > 1000)
+  {
+    rpm = 0;
+    tempo_rpm = millis();
+  } 
 }
 
 
@@ -92,16 +76,25 @@ bool Veiculo::estaAtualizado()
   return false;
 }
 
-void Veiculo::incrementarRodaE(){contadorRodaE++;}
-void Veiculo::incrementarRodaD(){contadorRodaD++;}
-void Veiculo::incrementarEixoT(){contadorEixoT++;}
-void Veiculo::incrementarRPM(){contadorRPM++;}
+void Veiculo::calcular_velocidade()
+{
+  volatile unsigned int aux = millis();
+  velocidade = (COMPRIMENTO * (1000/7.0) * 3.6 / (aux - tempo_velocidade));
+  tempo_velocidade = aux;
+}
+
+void Veiculo::calcular_rpm()
+{
+  volatile unsigned int aux = millis();
+  rpm = int(60000/(aux-tempo_rpm));
+  tempo_rpm = aux;
+}
 
 int8_t Veiculo::get_velocidade() {return velocidade;}
-uint16_t Veiculo::getRPM() {return RPM;}
-float Veiculo::getBateria() {return tensao_bateria;}
+uint16_t Veiculo::get_rpm() {return rpm;}
+float Veiculo::get_bateria() {return tensao_bateria;}
 
-int8_t Veiculo::get_Freio()
+int8_t Veiculo::get_freio()
 {
   return (estado_freio) ? true : false;
 }

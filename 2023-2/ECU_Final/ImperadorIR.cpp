@@ -21,5 +21,5 @@ void ImperadorIR::atualizar()
   tempObj = ir.readObjectTempC();
 }
 
-double ImperadorIR::getTemperaturaAmbiente(){return tempAmb;}
-double ImperadorIR::getTemperaturaObjeto(){return tempObj;}
+double ImperadorIR::get_temperatura_ambiente(){return tempAmb;}
+double ImperadorIR::get_temperatura_objeto(){return tempObj;}
