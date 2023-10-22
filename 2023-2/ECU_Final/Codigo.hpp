@@ -38,13 +38,11 @@ class Codigo
 
     void enviar_dados();
     void enviar_serial();
-    void enviar_lora();
     void enviar_CAN();
 
 
     void receber_dados();
     void verificar_serial();
-    void verificar_lora();
     void verificar_CAN();
 
   public:

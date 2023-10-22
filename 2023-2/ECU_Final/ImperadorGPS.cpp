@@ -46,8 +46,8 @@ void ImperadorGPS::atualizar()
   }
 }
 
-double ImperadorGPS::getVelocidade() {return velocidade;}
-double ImperadorGPS::getLatitude() {return latitude;}
-double ImperadorGPS::getLongitude() {return longitude;}
-double ImperadorGPS::getAltitude() {return altitude;}
-double ImperadorGPS::getCurso() {return curso;}
+double ImperadorGPS::get_velocidade() {return velocidade;}
+double ImperadorGPS::get_latitude() {return latitude;}
+double ImperadorGPS::get_longitude() {return longitude;}
+double ImperadorGPS::get_altitude() {return altitude;}
+double ImperadorGPS::get_curso() {return curso;}

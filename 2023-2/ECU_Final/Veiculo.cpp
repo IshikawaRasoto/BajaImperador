@@ -65,7 +65,6 @@ void Veiculo::atualizar_rpm()
   } 
 }
 
-
 bool Veiculo::estaAtualizado()
 {
   if(atualizado)

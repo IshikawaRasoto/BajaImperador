@@ -24,7 +24,7 @@ Codigo::~Codigo()
 
 void Codigo::configurar()
 {
-  iniciarSerial();
+  iniciar_serial();
   delay(1000);
   configurar_pinos();
 
@@ -50,7 +50,7 @@ void Codigo::configurar()
 void Codigo::executar()
 {
   atualizar();
-  enviarDados();
+  enviar_dados();
   receberDados();
 }
 
@@ -72,10 +72,10 @@ void Codigo::iniciarSerial()
   Serial.begin(BAUD_SERIAL);
 }
 
-void Codigo::enviarDados()
+void Codigo::enviar_dados()
 {
-  enviarSerial();
-  enviarCAN();
+  enviar_serial();
+  enviar_CAN();
   verificar_serial
 }
 
@@ -126,12 +126,7 @@ void Codigo::enviarSerial()
   Serial.println(baja.get_freio());
 }
 
-void Codigo::enviarLora()
-{
-
-}
-
-void Codigo::enviarCAN()
+void Codigo::enviar_CAN()
 {
 
 }
@@ -157,9 +152,8 @@ void Codigo::verificar_serial(){
   }
 }
 
-void Codigo::verificarLora(){}
 
-void Codigo::verificarCAN(){}
+void Codigo::verificar_CAN(){}
 
 
 void Codigo::atualizar()
@@ -167,13 +161,6 @@ void Codigo::atualizar()
   gps.atualizar();
   infraVermelho.atualizar();
   acelerometro.atualizar();
+  baja.atualizar();
   baja.atualizarBateria();
 }
-
-void Codigo::atualizarInt()
-{
-  baja.atualizar();
-}
-
-void atualizar_eixo_traseiro(){calcular_velocidade();}
-void atualizar_rpm(){calcular_rpm();}
