@@ -164,3 +164,13 @@ void Codigo::atualizar()
   baja.atualizar();
   baja.atualizarBateria();
 }
+
+void Codigo::atualizar_eixo_traseiro()
+{
+  baja.calcular_velocidade();
+}
+
+void Codigo::atualizar_rpm()
+{
+  baja.calcular_rpm();
+}

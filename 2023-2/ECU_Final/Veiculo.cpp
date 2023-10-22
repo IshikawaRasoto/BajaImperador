@@ -85,6 +85,9 @@ void Veiculo::calcular_velocidade()
 void Veiculo::calcular_rpm()
 {
   volatile unsigned int aux = millis();
+  
+  if(aux - tempo_rpm < 10) return;
+  
   rpm = int(60000/(aux-tempo_rpm));
   tempo_rpm = aux;
 }

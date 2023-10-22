@@ -22,12 +22,12 @@ Codigo cod;
 
 void interrupcao_eixo_traseiro()
 {
-    atualizar_eixo_traseiro();
+    cod.atualizar_eixo_traseiro();
 }
 
 void interrupcao_rpm()
 {
-    atualizar_rpm();
+    cod.atualizar_rpm();
 }
 
 

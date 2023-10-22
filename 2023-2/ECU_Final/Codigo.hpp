@@ -33,9 +33,6 @@ class Codigo
     void configurar_pinos();
     void iniciar_serial();
 
-    void atualizar_eixo_traseiro();
-    void atualizar_rpm();
-
     void enviar_dados();
     void enviar_serial();
     void enviar_CAN();
@@ -54,5 +51,8 @@ class Codigo
     void executar();
 
     void atualizar();
+
+    void atualizar_eixo_traseiro();
+    void atualizar_rpm();
 
 };
