@@ -128,9 +128,9 @@ void ImperadorAcelerometro::atualizar()
   temp = temperatura.temperature;
 }
 
-Vetor3 ImperadorAcelerometro::getAceleracao(){return acel;}
+Vetor3 ImperadorAcelerometro::get_aceleracao(){return acel;}
 
 
-Vetor3 ImperadorAcelerometro::getGiro(){return gir;}
+Vetor3 ImperadorAcelerometro::get_giro(){return gir;}
 
-float ImperadorAcelerometro::getTemperatura(){return temp;}
+float ImperadorAcelerometro::get_temperatura(){return temp;}

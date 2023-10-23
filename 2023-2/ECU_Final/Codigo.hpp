@@ -27,7 +27,7 @@ class Codigo
     ImperadorIR infravermelho;
 
     bool dev_mode;
-
+	bool racing_mode;
     bool box;
 
     void configurar_pinos();

@@ -16,7 +16,8 @@ Codigo::Codigo():
   acelerometro(),
   infraVermelho(),
   dev_mode(false),
-  box(false)
+  box(false),
+  racing_mode(false)
 {}
 
 Codigo::~Codigo()
@@ -147,8 +148,13 @@ void Codigo::verificar_serial(){
     else if(comando == "BOX")
     {
       box = !box;
-      box ? Serial.println("BOX BOX"); : Serial.println("NO BOX");
+      box ? Serial.println("BOX BOX") : Serial.println("NO BOX");
     }
+	else if(comando == "CORRIDA")
+	{
+		racing_mode = !racing_mode;
+		racing_mode ? Serial.println("RACE") : Serial.println("NO RACE");
+	}
   }
 }
 
