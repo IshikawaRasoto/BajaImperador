@@ -45,8 +45,8 @@
 #define RX_CAN 4
 #define TX_CAN 2
 
-#define SCL 22 //
-#define SDA 21 //
+//#define SCL 22 //
+//#define SDA 21 //
 
 #define SD_MISO 12
 #define SD_MOSI 13

@@ -15,6 +15,7 @@
 #include "ImperadorGPS.hpp"
 #include "ImperadorAcelerometro.hpp"
 #include "ImperadorIR.hpp"
+#include "ImperadorSD.hpp"
 
 class Codigo
 {
@@ -25,6 +26,7 @@ class Codigo
     ImperadorGPS gps;
     ImperadorAcelerometro acelerometro;
     ImperadorIR infravermelho;
+    ImperadorSD sd;
 
     bool dev_mode;
 	  bool racing_mode;

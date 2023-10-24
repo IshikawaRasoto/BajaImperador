@@ -14,7 +14,7 @@ Codigo::Codigo():
   
   gps(BAUD_GPS, RX_GPS, TX_GPS),
   acelerometro(),
-  infraVermelho(),
+  infravermelho(),
   dev_mode(false),
   box(false),
   racing_mode(false)
@@ -38,7 +38,7 @@ void Codigo::configurar()
     Serial.println("Acelerômetro iniciado");
   }
 
-  if(!infraVermelho.iniciar())
+  if(!infravermelho.iniciar())
   {
     Serial.println("Falha ao iniciar InfraVermelho.");
   }
@@ -52,7 +52,8 @@ void Codigo::executar()
 {
   atualizar();
   enviar_dados();
-  receberDados();
+  verificar_serial();
+  verificar_CAN();
 }
 
 
@@ -68,7 +69,7 @@ void Codigo::configurar_pinos()
   pinMode(PINO_FREIO, INPUT);
 }
 
-void Codigo::iniciarSerial()
+void Codigo::iniciar_serial()
 {
   Serial.begin(BAUD_SERIAL);
 }
@@ -77,19 +78,18 @@ void Codigo::enviar_dados()
 {
   enviar_serial();
   enviar_CAN();
-  verificar_serial
 }
 
-void Codigo::enviarSerial()
+void Codigo::enviar_serial()
 {
-  if(dev)
+  if(dev_mode)
   {
     Serial.print("RPM:");
     Serial.print(baja.get_rpm());
     Serial.print("|Vel:");
     Serial.print(baja.get_velocidade(), 0);
     Serial.print("|TEMP:");
-    Serial.print(infraVermelho.get_temperatura_objeto(), 0);
+    Serial.print(infravermelho.get_temperatura_objeto(), 0);
     Serial.print("|BAT:");
     Serial.print(baja.get_bateria());
     Serial.print("|FRE:");
@@ -101,11 +101,11 @@ void Codigo::enviarSerial()
     Serial.print("|ACLZ:");
     Serial.print(acelerometro.get_aceleracao().z);
     Serial.print("|LAT:");
-    Serial.print(gps.getLatitude());
+    Serial.print(gps.get_latitude());
     Serial.print("|LNG:");
-    Serial.print(gps.getLongitude());
+    Serial.print(gps.get_longitude());
     Serial.print("|CURSO:");
-    Serial.println(gps.getCurso());
+    Serial.println(gps.get_curso());
     return;
   }
 
@@ -118,7 +118,7 @@ void Codigo::enviarSerial()
   Serial.print(baja.get_velocidade(),0);
 
   Serial.print("T");
-  Serial.print(infraVermelho.get_temperatura_objeto(), 0);
+  Serial.print(infravermelho.get_temperatura_objeto(), 0);
 
   Serial.print("B");
   Serial.print(baja.get_bateria());
@@ -137,24 +137,27 @@ void Codigo::verificar_serial(){
   {
     String comando = Serial.readString();
 
-    if(comando == "DEV" || comando == "dev")
+    if(comando == "DEV")
     {
-      dev = true;
+      dev_mode = true;
     }
-    else if(comando == "NORMAL" || comando == "normal")
+    else if(comando == "NOTDEV")
     {
-      dev = false;
+      dev_mode = false;
     }
     else if(comando == "BOX")
     {
       box = !box;
       box ? Serial.println("BOX BOX") : Serial.println("NO BOX");
     }
-	else if(comando == "CORRIDA")
-	{
-		racing_mode = !racing_mode;
-		racing_mode ? Serial.println("RACE") : Serial.println("NO RACE");
-	}
+	  else if(comando == "RACE")
+	  {
+		  racing_mode = true;
+	  }
+    else if(comando == "TESTE")
+    {
+      racing_mode = false;
+    }
   }
 }
 
@@ -165,10 +168,14 @@ void Codigo::verificar_CAN(){}
 void Codigo::atualizar()
 {
   gps.atualizar();
-  infraVermelho.atualizar();
-  acelerometro.atualizar();
+  infravermelho.atualizar();
   baja.atualizar();
-  baja.atualizarBateria();
+  baja.atualizar_bateria();
+  if(racing_mode)
+  {
+    acelerometro.atualizar();
+    // Salvar no SD 
+  }
 }
 
 void Codigo::atualizar_eixo_traseiro()

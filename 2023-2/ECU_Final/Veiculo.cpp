@@ -32,7 +32,6 @@ void Veiculo::atualizar()
   atualizar_bateria();
   atualizar_velocidade();
 
-  atualizado = true;
 }
 
 
@@ -43,8 +42,8 @@ void Veiculo::atualizar_freio()
 
 void Veiculo::atualizar_bateria()
 {
-  valorBateria = analogRead(PINO_BATERIA);
-  tensao_bateria = ((float)valorBateria / 4095) * 13.0;
+  valor_bateria = analogRead(PINO_BATERIA);
+  tensao_bateria = ((float)valor_bateria / 4095) * 13.0;
 }
 
 void Veiculo::atualizar_velocidade()
@@ -63,16 +62,6 @@ void Veiculo::atualizar_rpm()
     rpm = 0;
     tempo_rpm = millis();
   } 
-}
-
-bool Veiculo::estaAtualizado()
-{
-  if(atualizado)
-  {
-    atualizado = false;
-    return true;
-  }
-  return false;
 }
 
 void Veiculo::calcular_velocidade()

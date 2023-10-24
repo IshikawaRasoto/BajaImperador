@@ -26,9 +26,6 @@ class Veiculo
 
     bool estado_freio;
 
-
-    void calcular_velocidade();
-    void calcular_rpm();
     void atualizar_freio();
     
   public:
@@ -40,8 +37,8 @@ class Veiculo
 
     int8_t get_velocidade();
     uint16_t get_rpm();
-    uint8_t get_bateria();
     int8_t get_freio();
+    float get_bateria();
 
 
     bool esta_atualizado();
@@ -50,5 +47,8 @@ class Veiculo
     void atualizar_bateria();
     void atualizar_velocidade();
     void atualizar_rpm();
+
+    void calcular_velocidade();
+    void calcular_rpm();
 
 };

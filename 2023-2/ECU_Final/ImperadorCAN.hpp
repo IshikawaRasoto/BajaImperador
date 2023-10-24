@@ -11,10 +11,11 @@
 #include <Arduino.h>
 
 class ImperadorCAN
+{
 	public:
 
-		Imperador_CAN();
-		~Imperador_CAN();
+		ImperadorCAN();
+		~ImperadorCAN();
 
 		void enviar(String s);
 		String verificar();
