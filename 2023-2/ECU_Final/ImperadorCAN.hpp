@@ -17,6 +17,6 @@ class ImperadorCAN
 		ImperadorCAN();
 		~ImperadorCAN();
 
-		void enviar(String s);
-		String verificar();
+		void enviar(int8_t velocidade, uint16_t rpm, bool alarme_bateria, bool alarme_temperatura, bool box);
+		String receber();
 };

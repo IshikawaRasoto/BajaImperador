@@ -18,6 +18,9 @@
 #define BATERIA_ZERO    3542 // 4095 * (2,855V (11,8V Bateria Descarregada)/3,3V) 
 #define BATERIA_CHEIA   3847 // 4095 * (3,085V (12,8V da bateria) / 3,3V)
 
+#define AVISO_BATERIA 12.0 // tensão da bateria para dar o aviso
+#define AVISO_TEMPERATURA 75 // Temperatura ºC para dar o aviso.
+
 // Macros dos dentes
 
 #define DESTES_RODAD 4

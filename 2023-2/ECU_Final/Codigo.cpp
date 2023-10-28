@@ -129,7 +129,9 @@ void Codigo::enviar_serial()
 
 void Codigo::enviar_CAN()
 {
-
+  bool status_bateria = baja.get_bateria() < AVISO_BATERIA ? true : false;
+  bool status_temperatura = baja.get_temperatura_objeto() > AVISO_TEMPERATURA ? true : false;
+  can.enviar(baja.get_velocidade(), baja.get_rpm(), status_bateria(), status_temperatura(), box);
 }
 
 void Codigo::verificar_serial(){

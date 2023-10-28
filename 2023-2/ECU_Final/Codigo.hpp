@@ -16,6 +16,7 @@
 #include "ImperadorAcelerometro.hpp"
 #include "ImperadorIR.hpp"
 #include "ImperadorSD.hpp"
+#include "ImperadorCAN.hpp"
 
 class Codigo
 {
@@ -27,6 +28,7 @@ class Codigo
     ImperadorAcelerometro acelerometro;
     ImperadorIR infravermelho;
     ImperadorSD sd;
+    ImperadorCAN can;
 
     bool dev_mode;
 	  bool racing_mode;

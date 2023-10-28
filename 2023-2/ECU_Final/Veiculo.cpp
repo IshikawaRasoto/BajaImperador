@@ -43,7 +43,7 @@ void Veiculo::atualizar_freio()
 void Veiculo::atualizar_bateria()
 {
   valor_bateria = analogRead(PINO_BATERIA);
-  tensao_bateria = ((float)valor_bateria / 4095) * 13.0;
+  tensao_bateria = ((float)valor_bateria / BATERIA_CHEIA) * 12.8;
 }
 
 void Veiculo::atualizar_velocidade()
