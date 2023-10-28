@@ -16,24 +16,17 @@ ImperadorCAN::ImperadorCAN()
 
 ImperadorCAN::~ImperadorCAN(){}
 
-void ImperadorCAN::enviar(int8_t velocidade, uint16_t rpm, bool alarme_bateria, bool alarme_temperatura, bool box)
+void ImperadorCAN::enviar_rv(uint16_t rpm, int8_t velocidade)
 {
     CAN.beginPacket(0x12);
-
-    char rpm_char [5];
+    
+    char rpm_char [10];
     char velocidade_char[5];
-    char bateria_char;
-    char temperatura_char;
-    char box_char;
 
-    itoa(rpm/100, rpm_char, 10);
+    itoa(rpm, rpm_char, 10);
     itoa(velocidade, velocidade_char, 10);
 
-    alarme_bateria ? bateria_char = '1' : bateria_char = '0';
-    alarme_temperatura ? temperatura_char = '1' : temperatura_char = '0';
-    box ? box_char = '1' : box_char = '0';
-
-    for(int i = 0; i < 2; i++)
+    for(int i = 0; i < 4; i++)
     {
         CAN.write(rpm_char[i]);
     }
@@ -43,12 +36,42 @@ void ImperadorCAN::enviar(int8_t velocidade, uint16_t rpm, bool alarme_bateria, 
         CAN.write(velocidade_char[i]);
     }
 
-    CAN.write(bateria_char);
-    CAN.write(temperatura_char);
+    CAN.endPacket();
+}
+
+
+void ImperadorCAN::enviar_btb(float tensao_bateria, double valor_temperatura, bool box)
+{
+    CAN.beginPacket(0x12);
+    
+    char bateria_char[10];
+    char temperatura_char[10];
+    char box_char;
+
+    int8_t bateria_int = int8_t(tensao_bateria * 10);
+    int8_t temperatura_int = int8_t(valor_temperatura);
+
+    itoa(bateria_int, bateria_char, 10);
+    itoa(temperatura_int, temperatura_char, 10);
+
+    for (int i = 0; i < 3; i++)
+    {
+        CAN.write(bateria_char[i]);           
+    }    
+
+    for(int i = 0; i < 3; i++)
+    {
+        CAN.write(temperatura_char[i]);
+    }
+
+
+    box ? box_char = '1' : box_char = '0';
+
     CAN.write(box_char);
 
     CAN.endPacket();
 }
+
 
 String ImperadorCAN::receber()
 {
