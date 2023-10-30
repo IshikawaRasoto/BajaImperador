@@ -22,11 +22,13 @@ Codigo cod;
 
 void interrupcao_eixo_traseiro()
 {
+    //Serial.println("INT ET");
     cod.atualizar_eixo_traseiro();
 }
 
 void interrupcao_rpm()
 {
+  //Serial.println("INT RPM");
     cod.atualizar_rpm();
 }
 
@@ -34,6 +36,8 @@ void interrupcao_rpm()
 
 void setup()
 {
+    attachInterrupt(digitalPinToInterrupt(PINO_EIXOT), interrupcao_eixo_traseiro, RISING);
+    attachInterrupt(digitalPinToInterrupt(PINO_RPM), interrupcao_rpm, RISING);
     cod.configurar();
 }
 

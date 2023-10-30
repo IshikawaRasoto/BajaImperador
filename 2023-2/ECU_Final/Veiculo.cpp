@@ -31,7 +31,7 @@ void Veiculo::atualizar()
   atualizar_freio();
   atualizar_bateria();
   atualizar_velocidade();
-
+  atualizar_rpm();
 }
 
 
@@ -48,6 +48,7 @@ void Veiculo::atualizar_bateria()
 
 void Veiculo::atualizar_velocidade()
 {
+  //Serial.println("I V");
   if(millis() - tempo_velocidade > 1000)
   {
     velocidade = 0;
@@ -57,6 +58,7 @@ void Veiculo::atualizar_velocidade()
 
 void Veiculo::atualizar_rpm()
 {
+  //Serial.println("I R");
   if(millis() - tempo_rpm > 1000)
   {
     rpm = 0;
@@ -82,7 +84,7 @@ void Veiculo::calcular_rpm()
 }
 
 int8_t Veiculo::get_velocidade() {return velocidade;}
-uint16_t Veiculo::get_rpm() {return rpm;}
+int16_t Veiculo::get_rpm() {return rpm;}
 float Veiculo::get_bateria() {return tensao_bateria;}
 
 int8_t Veiculo::get_freio()

@@ -8,60 +8,121 @@
 #include "ImperadorCAN.hpp"
 #include <CAN.h>
 
-ImperadorCAN::ImperadorCAN()
+ImperadorCAN::ImperadorCAN():
+  iniciado(false)
 {
-    CAN.setPins(RX_CAN, TX_CAN);
-    if(!CAN.begin(500E3)) Serial.println("CAN Falhou para inciar");
 }
 
 ImperadorCAN::~ImperadorCAN(){}
 
-void ImperadorCAN::enviar_rv(uint16_t rpm, int8_t velocidade)
+bool ImperadorCAN::iniciar()
 {
+  CAN.setPins(RX_CAN, TX_CAN);
+  if(!CAN.begin(500E3))
+  {
+    Serial.println("CAN Falhou para inciar");
+    iniciado = false;
+    return false;
+  }
+
+  Serial.println("CAN OK");
+  iniciado = true;
+  return true;
+}
+
+void ImperadorCAN::enviar_rv(int16_t rpm, int8_t velocidade)
+{
+    if(!iniciado) return;
+
+    //Serial.println("Enviando Pacote RV");
+
+    //Serial.println("Velocidade: " + String(velocidade) + "RPM: " + String(rpm));
+
     CAN.beginPacket(0x12);
     
-    char rpm_char [10];
-    char velocidade_char[5];
+    String rpm_string = String(rpm);
+    String vel_string = String(velocidade);
 
-    itoa(rpm, rpm_char, 10);
-    itoa(velocidade, velocidade_char, 10);
+    //Serial.println("For R");
+
+
+    // FORMATO DA STRING ENVIADA RXXXXVXX
+
+    while (rpm_string.length() < 4)
+    {
+      rpm_string = "0" + rpm_string;
+    }
+
+    if(vel_string.length() < 2) vel_string = "0" + vel_string;
+
+    CAN.write('R');
 
     for(int i = 0; i < 4; i++)
     {
-        CAN.write(rpm_char[i]);
+        //Serial.print(rpm_string[i]);
+        CAN.write(rpm_string[i]);
     }
 
+    //Serial.println("For V");
+
+
+    CAN.write('V');
     for(int i = 0; i < 2; i++)
     {
-        CAN.write(velocidade_char[i]);
+        //Serial.print(vel_string[i]);
+        CAN.write(vel_string[i]);
     }
 
+    //Serial.println();
+
+   //Serial.println("Finalizando");
+
     CAN.endPacket();
+
+    //Serial.println("Envio Finalizado");
 }
 
 
 void ImperadorCAN::enviar_btb(float tensao_bateria, double valor_temperatura, bool box)
 {
+    if(!iniciado) return;
+
+    //Serial.println("Enviando BTB");
+
     CAN.beginPacket(0x12);
+
+    //FORMATO DA STRING ENVIADA Cbbbtttb
     
-    char bateria_char[10];
-    char temperatura_char[10];
+    String bateria_string = String(tensao_bateria*10, 0);
+    String temperatura_string = String(valor_temperatura, 0);
     char box_char;
 
-    int8_t bateria_int = int8_t(tensao_bateria * 10);
-    int8_t temperatura_int = int8_t(valor_temperatura);
+    //Serial.println("ITOA");
 
-    itoa(bateria_int, bateria_char, 10);
-    itoa(temperatura_int, temperatura_char, 10);
+    while(bateria_string.length() < 3)
+    {
+      bateria_string = "0" + bateria_string;
+    }
+
+    while(temperatura_string.length() < 3)
+    {
+      temperatura_string = "0" + temperatura_string;
+    }
+
+    //Serial.println("For B");
+
+    CAN.write('C'); //Indetificador do pacote - C: Críticos
 
     for (int i = 0; i < 3; i++)
     {
-        CAN.write(bateria_char[i]);           
+        CAN.write(bateria_string[i]);           
     }    
+
+    //Serial.println("For T");
 
     for(int i = 0; i < 3; i++)
     {
-        CAN.write(temperatura_char[i]);
+        CAN.write(temperatura_string[i]);
     }
 
 
@@ -70,11 +131,15 @@ void ImperadorCAN::enviar_btb(float tensao_bateria, double valor_temperatura, bo
     CAN.write(box_char);
 
     CAN.endPacket();
+
+    //Serial.println("Finalizado");
 }
 
 
 String ImperadorCAN::receber()
 {
+    if(!iniciado) return "error";
+
     String retorno;
 
     while(CAN.available())
@@ -84,3 +149,5 @@ String ImperadorCAN::receber()
 
     return retorno;
 }
+
+bool ImperadorCAN::get_iniciado(){return iniciado;}

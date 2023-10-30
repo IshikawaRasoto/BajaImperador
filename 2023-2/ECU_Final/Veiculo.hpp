@@ -16,7 +16,7 @@ class Veiculo
   private:
 
     volatile int8_t velocidade;
-    volatile uint16_t rpm;
+    volatile int16_t rpm;
 
     volatile unsigned long tempo_velocidade;
     volatile unsigned long tempo_rpm;
@@ -36,7 +36,7 @@ class Veiculo
 
 
     int8_t get_velocidade();
-    uint16_t get_rpm();
+    int16_t get_rpm();
     int8_t get_freio();
     float get_bateria();
 

@@ -14,15 +14,20 @@ bool ImperadorSD::iniciar(int CS)
   bool iniciou = SD.begin(CS);
   if(!iniciou)
   {
+    iniciado = false;
     Serial.println("FALHA AO INICIAR SD");
-    return iniciou;
+    return false;
   }
 
-  
+  iniciado = true;
+  Serial.println("SD OK");
+  return true;
 }
 
 void ImperadorSD::escrever(const char* path, const char* mensagem)
 {
+
+  if(!iniciado) return;
 
   arquivo = SD.open(path, FILE_WRITE);
 
@@ -36,6 +41,8 @@ void ImperadorSD::escrever(const char* path, const char* mensagem)
 
 void ImperadorSD::ler(const char* path)
 {
+  if(!iniciado) return;
+
   arquivo = SD.open(path);
   if(arquivo)
   {
@@ -46,3 +53,5 @@ void ImperadorSD::ler(const char* path)
     arquivo.close();
   }
 }
+
+bool ImperadorSD::get_iniciado(){return iniciado;}

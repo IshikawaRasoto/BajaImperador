@@ -30,7 +30,7 @@
 
 // Macros Pinos
 
-#define PINO_RODAD 18 //
+#define PINO_RODAD 23 //
 #define PINO_RODAE 34 //
 #define PINO_EIXOT 35 // 
 #define PINO_RPM   19 //
@@ -45,8 +45,8 @@
 #define TX_LORA 17
 #define RX_LORA 16
 
-#define RX_CAN 4
-#define TX_CAN 2
+#define RX_CAN 18
+#define TX_CAN 5
 
 //#define SCL 22 //
 //#define SDA 21 //
@@ -56,10 +56,7 @@
 #define SD_CLK  14
 #define SD_CS   15
 
-#define TERMO_MISO  19
-#define TERMO_MOSI  23
-#define TERMO_CLK   18
-#define TERMO_CS    5
+#define PINO_LED 2
 
 
 // Macros BaudRates

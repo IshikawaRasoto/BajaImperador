@@ -7,9 +7,16 @@
 
 #include "ImperadorAcelerometro.hpp"
 
-ImperadorAcelerometro::ImperadorAcelerometro()
+ImperadorAcelerometro::ImperadorAcelerometro():
+  iniciado(false),
+  temp(NAO_INICIADO)
 {
-  
+  acel.x = (NAO_INICIADO);
+  acel.y = (NAO_INICIADO);
+  acel.z = (NAO_INICIADO);
+  gir.x = (NAO_INICIADO);
+  gir.y = (NAO_INICIADO);
+  gir.z = (NAO_INICIADO);
 }
 
 ImperadorAcelerometro::~ImperadorAcelerometro()
@@ -19,6 +26,15 @@ ImperadorAcelerometro::~ImperadorAcelerometro()
 bool ImperadorAcelerometro::iniciar(uint8_t escalaAcelerometro, uint16_t escalaGiroscopio, uint8_t faixaFiltro)
 {
   bool retorno = acelerometro.begin();
+
+  if(!retorno)
+  {
+    Serial.println("Falha ao iniciar acelerômetro.");
+    iniciado = false;
+    return false;
+  }
+
+  iniciado = true;
 
   delay(500);
 
@@ -106,11 +122,13 @@ bool ImperadorAcelerometro::iniciar(uint8_t escalaAcelerometro, uint16_t escalaG
       break;
   }
 
-  return retorno;
+  return true;
 }
 
 void ImperadorAcelerometro::atualizar()
 {
+  if(!iniciado) return;
+
   sensors_event_t aceleracao;
   sensors_event_t giro;
   sensors_event_t temperatura;
@@ -129,8 +147,6 @@ void ImperadorAcelerometro::atualizar()
 }
 
 Vetor3 ImperadorAcelerometro::get_aceleracao(){return acel;}
-
-
 Vetor3 ImperadorAcelerometro::get_giro(){return gir;}
-
 float ImperadorAcelerometro::get_temperatura(){return temp;}
+bool ImperadorAcelerometro::get_iniciado(){return iniciado;}

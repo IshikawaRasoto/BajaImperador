@@ -5,6 +5,10 @@
 
 */
 
+#pragma once
+
+#define NAO_INICIADO -50
+
 #include <Arduino.h>
 
 #include <Wire.h>
@@ -18,6 +22,8 @@ class ImperadorIR
   private:
 
     Adafruit_MLX90614 ir;
+
+    bool iniciado;
 
     double tempAmb;
     double tempObj;
@@ -33,5 +39,5 @@ class ImperadorIR
 
     double get_temperatura_objeto();
     double get_temperatura_ambiente(); 
-
+    bool get_iniciado();
 };

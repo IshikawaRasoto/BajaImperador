@@ -13,6 +13,8 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 
+#define NAO_INICIADO -20
+
 struct Vetor3
 {
   float x;
@@ -26,25 +28,21 @@ class ImperadorAcelerometro
   private:
 
     Adafruit_MPU6050 acelerometro;
-
     Vetor3 acel;
-
     Vetor3 gir;
-
     float temp;
+    bool iniciado;
 
   public:
 
     ImperadorAcelerometro();
     ~ImperadorAcelerometro();
 
+    bool iniciar(uint8_t escalaAcelerometro = 8, uint16_t escalaGiroscopio = 500, uint8_t faixaFiltro = 21);
     void atualizar();
 
-    bool iniciar(uint8_t escalaAcelerometro = 8, uint16_t escalaGiroscopio = 500, uint8_t faixaFiltro = 21);
-
     Vetor3 get_aceleracao();
-
     Vetor3 get_giro();
-
     float get_temperatura();
+    bool get_iniciado();
 };

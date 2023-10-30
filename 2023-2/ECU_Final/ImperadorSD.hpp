@@ -24,6 +24,8 @@ class ImperadorSD
 
     void escrever(const char* path, const char* mensagem);
 
+    bool iniciado;
+
   public:
     
     ImperadorSD();
@@ -38,6 +40,7 @@ class ImperadorSD
     void registrar(float velocidade, uint16_t rpm);
 
     void ler(const char* path);
-
+    
+    bool get_iniciado();
 };
 

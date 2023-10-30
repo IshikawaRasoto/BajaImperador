@@ -13,8 +13,6 @@
 Codigo::Codigo():
   
   gps(BAUD_GPS, RX_GPS, TX_GPS),
-  acelerometro(),
-  infravermelho(),
   dev_mode(false),
   box(false),
   racing_mode(false)
@@ -26,34 +24,25 @@ Codigo::~Codigo()
 void Codigo::configurar()
 {
   iniciar_serial();
+  Serial.println("Serial iniciada");
   delay(1000);
   configurar_pinos();
+  Serial.println("Pinos Configurados");
 
-  if(!acelerometro.iniciar())
-  {
-    Serial.println("Falha ao iniciar Acelerômetro.");
-  }
-  else
-  {
-    Serial.println("Acelerômetro iniciado");
-  }
-
-  if(!infravermelho.iniciar())
-  {
-    Serial.println("Falha ao iniciar InfraVermelho.");
-  }
-  else
-  {
-    Serial.println("Infravermelho iniciado");
-  }
+  acelerometro.iniciar();
+  infravermelho.iniciar();
+  can.iniciar();
 }
 
 void Codigo::executar()
 {
+  //Serial.println("Atualizar");
   atualizar();
+  //Serial.println("Eviar Dados");
   enviar_dados();
+  //Serial.println("Verificar Serial");
   verificar_serial();
-  verificar_CAN();
+  //verificar_CAN();
 }
 
 
@@ -67,16 +56,23 @@ void Codigo::configurar_pinos()
   pinMode(PINO_RPM, INPUT);
 
   pinMode(PINO_FREIO, INPUT);
+
+  pinMode(PINO_LED, OUTPUT);
+
+  digitalWrite(PINO_LED, HIGH);
 }
 
 void Codigo::iniciar_serial()
 {
   Serial.begin(BAUD_SERIAL);
+  Serial2.begin(BAUD_SERIAL, SERIAL_8N1, RX_LORA, TX_LORA );
 }
 
 void Codigo::enviar_dados()
 {
+  //Serial.println("Envio Lora");
   enviar_serial();
+  //Serial.println("Envio CAN");
   enviar_CAN();
 }
 
@@ -100,6 +96,12 @@ void Codigo::enviar_serial()
     Serial.print(acelerometro.get_aceleracao().y);
     Serial.print("|ACLZ:");
     Serial.print(acelerometro.get_aceleracao().z);
+    Serial.print("|GIROX:");
+    Serial.print(acelerometro.get_giro().x);
+    Serial.print("|GIROY:");
+    Serial.print(acelerometro.get_giro().y);
+    Serial.print("|GIROZ:");
+    Serial.print(acelerometro.get_giro().z);
     Serial.print("|LAT:");
     Serial.print(gps.get_latitude());
     Serial.print("|LNG:");
@@ -111,27 +113,27 @@ void Codigo::enviar_serial()
 
   //!dev
   
-  Serial.print("R");
-  Serial.print(baja.get_rpm()/10);
+  Serial2.print("R");
+  Serial2.print(baja.get_rpm()/10);
 
-  Serial.print("V");
-  Serial.print(baja.get_velocidade(),0);
+  Serial2.print("V");
+  Serial2.print(baja.get_velocidade(),0);
 
-  Serial.print("T");
-  Serial.print(infravermelho.get_temperatura_objeto(), 0);
+  Serial2.print("T");
+  Serial2.print(infravermelho.get_temperatura_objeto(), 0);
 
-  Serial.print("B");
-  Serial.print(baja.get_bateria());
+  Serial2.print("B");
+  Serial2.print(baja.get_bateria());
 
-  Serial.print("F");
-  Serial.println(baja.get_freio());
+  Serial2.print("F");
+  Serial2.println(baja.get_freio());
 }
 
 void Codigo::enviar_CAN()
-{
-  bool status_bateria = baja.get_bateria() < AVISO_BATERIA ? true : false;
-  bool status_temperatura = baja.get_temperatura_objeto() > AVISO_TEMPERATURA ? true : false;
-  can.enviar(baja.get_velocidade(), baja.get_rpm(), status_bateria(), status_temperatura(), box);
+{ 
+  can.enviar_rv(baja.get_rpm(), baja.get_velocidade());
+  delay(50);
+  //can.enviar_btb(baja.get_bateria(), infravermelho.get_temperatura_objeto(), box);
 }
 
 void Codigo::verificar_serial(){
@@ -139,11 +141,12 @@ void Codigo::verificar_serial(){
   {
     String comando = Serial.readString();
 
-    if(comando == "DEV")
+    if(comando == "DEV" || comando == "dev")
     {
       dev_mode = true;
+      Serial.println("DEV MODE");
     }
-    else if(comando == "NOTDEV")
+    else if(comando == "NORMAL" || comando == "normal")
     {
       dev_mode = false;
     }
@@ -161,6 +164,17 @@ void Codigo::verificar_serial(){
       racing_mode = false;
     }
   }
+
+  if(Serial2.available())
+  {
+    String comando = Serial2.readString();
+
+    if(comando == "BOX")
+    {
+      box = !box;
+      box ? Serial.println("BOX BOX") : Serial.println("NO BOX");
+    }
+  }
 }
 
 
@@ -173,11 +187,7 @@ void Codigo::atualizar()
   infravermelho.atualizar();
   baja.atualizar();
   baja.atualizar_bateria();
-  if(racing_mode)
-  {
-    acelerometro.atualizar();
-    // Salvar no SD 
-  }
+  acelerometro.atualizar();
 }
 
 void Codigo::atualizar_eixo_traseiro()
